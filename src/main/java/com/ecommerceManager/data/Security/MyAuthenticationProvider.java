@@ -1,5 +1,6 @@
 package com.ecommerceManager.data.Security;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.ecommerceManager.data.User;
@@ -30,13 +32,17 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
 		final String username = (String) authentication.getPrincipal();
 		if(username == "") throw new BadCredentialsException("Login empty");
 		Optional<User> user = Optional.of(userRepo.findByUsername(authentication.getName()));
-		int shopId = Integer.valueOf(request.getRequestURI().replaceAll("/shop/", "").replaceAll("\\/.*$", ""));
+		String shopIdString = request.getRequestURI().replaceAll("/shop/", "").replaceAll("\\/.*$", "");
+		
 		UsernamePasswordAuthenticationToken token = null;
 		if(user.isPresent()) {
-			List<Long> shops = user.get().getShops().stream().filter(s -> s.getShopId() == shopId).map(s -> s.getShopId()).collect(Collectors.toList());
-			System.out.println(shops.toString());
-			if(shops.isEmpty()) throw new BadCredentialsException("Not allowed");		
-			token = new UsernamePasswordAuthenticationToken(user.get().getUsername(), authentication.getCredentials(), null);
+			if(shopIdString != "") {
+				final int shopId = Integer.valueOf(shopIdString);
+				List<Long> shops = user.get().getShops().stream().filter(s -> s.getShopId() == shopId).map(s -> s.getShopId()).collect(Collectors.toList());
+				if(shops.isEmpty()) throw new BadCredentialsException("Not allowed");	
+			}
+				
+			token = new UsernamePasswordAuthenticationToken(user.get().getUsername(), authentication.getCredentials(), Arrays.asList(new SimpleGrantedAuthority(user.get().getRole().getName())));
 		}
 		else throw new BadCredentialsException("no user");
 		token.setDetails(authentication.getDetails());

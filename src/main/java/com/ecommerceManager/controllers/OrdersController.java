@@ -3,15 +3,19 @@ package com.ecommerceManager.controllers;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecommerceManager.controllers.helpers.FakturowniaHelper;
 import com.ecommerceManager.data.models.BillingRepo;
+import com.ecommerceManager.data.models.FakturowniaRepo;
 import com.ecommerceManager.data.models.LineItemRepo;
 import com.ecommerceManager.data.models.MetaDataRepo;
 import com.ecommerceManager.data.models.Order;
@@ -31,6 +35,9 @@ public class OrdersController {
 	private OrderRepo orderRepo;
 	
 	@Autowired
+	private FakturowniaRepo fakturowniaRepo;
+	
+	@Autowired
 	private MetaDataRepo metaDataRepo;
 	@Autowired
 	private LineItemRepo lineItemRepo;
@@ -48,7 +55,7 @@ public class OrdersController {
 		for(Order order : orders) {
 			result.append(order.toString());
 		}
-		return result.toString();
+		return "Order refreshed!";
 	}
 	
 	@RequestMapping("/shop/{id}/orders")
@@ -79,6 +86,11 @@ public class OrdersController {
 		LocalDateTime zdt = LocalDateTime.parse(order.getDate_created(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		return zdt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
 		
+	}
+	
+	@GetMapping("/shop/{shopId}/order/{orderId}/invoice")
+	public String getInvoice(@PathVariable Map<String, String> pathVariables) {
+		return FakturowniaHelper.getInvoice(140920747, fakturowniaRepo.findApiToken(pathVariables.get("shopId")));
 	}
 
 }

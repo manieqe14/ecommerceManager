@@ -1,38 +1,40 @@
 package com.ecommerceManager.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserPrincipal implements UserDetails {
 	
-	private String username;
-	private String password;
+	private User user;
 	
 	public UserPrincipal() {
 		
 	}
 	
-	public UserPrincipal(String username, String password) {
-		this.username = username;
-		this.password = password;
+	public UserPrincipal(User user) {
+		this.user = user;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
+		return authorities;
 	}
 
 	@Override
 	public String getPassword() {
-		return password;
+		return user.getPassword();
 	}
 
 	@Override
 	public String getUsername() {
-		return username;
+		return user.getUsername();
 	}
 
 	@Override

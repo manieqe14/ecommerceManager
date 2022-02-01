@@ -3,7 +3,10 @@ package com.ecommerceManager.data.models;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -19,7 +22,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Order {
 	
 	@Id
-	@Column(name="orderId")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private long orderId;
+	
+	
+	@Column(name="wpId")
 	private long id;
 	
 	private int parent_id;
@@ -52,6 +59,28 @@ public class Order {
 	
 	@OneToMany(mappedBy="order")
 	private Set<MetaData> meta_data;
+	
+	@Embedded
+	private Invoice invoice;	
+	
+	public long getOrderId() {
+		return orderId;
+	}
+
+
+	public void setOrderId(long orderId) {
+		this.orderId = orderId;
+	}
+	
+
+	public Invoice getInvoice() {
+		return invoice;
+	}
+
+
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
+	}
 
 
 	public long getId() {

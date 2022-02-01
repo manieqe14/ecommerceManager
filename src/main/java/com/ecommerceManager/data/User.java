@@ -5,10 +5,13 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.ecommerceManager.data.models.Shop;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "users")
@@ -22,7 +25,12 @@ public class User {
 	private boolean isNonLocked;
 	
 	@OneToMany(mappedBy="user")
+	@JsonIgnore
 	private List<Shop> shops;
+	
+	@ManyToOne
+	@JoinColumn(name="role")
+	private Role role;
 	
 	public String getUsername() {
 		return username;
@@ -48,6 +56,15 @@ public class User {
 	}
 	public void setShops(List<Shop> shops) {
 		this.shops = shops;
+	}
+	
+	
+	
+	public Role getRole() {
+		return role;
+	}
+	public void setRole(Role role) {
+		this.role = role;
 	}
 	@Override
 	public String toString() {

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerceManager.data.User;
 import com.ecommerceManager.data.UserRepo;
+import com.ecommerceManager.data.models.Fakturownia;
+import com.ecommerceManager.data.models.FakturowniaRepo;
 import com.ecommerceManager.data.models.Shop;
 import com.ecommerceManager.data.models.ShopRepo;
 
@@ -22,6 +24,9 @@ public class ShopsController {
 	
 	@Autowired
 	private UserRepo userRepo;
+	
+	@Autowired
+	private FakturowniaRepo fakturowniaRepo;
 	
 	private @Autowired HttpServletRequest request;
 	
@@ -36,6 +41,14 @@ public class ShopsController {
 	@GetMapping("/shop/{id}/info")
 	public Shop getInfo(@PathVariable long id) {
 		return shopRepo.findById(id).orElse(new Shop());
+	}
+	
+	@PostMapping("/shop/{shopId}/fakturowniaSettings")
+	public Fakturownia fakturowniaSettings(@PathVariable long shopId, @RequestBody Fakturownia fakturownia) {
+		fakturownia.setShop(shopRepo.findById(shopId).orElse(new Shop()));
+		fakturowniaRepo.save(fakturownia);
+		return fakturownia;
+		
 	}
 
 }

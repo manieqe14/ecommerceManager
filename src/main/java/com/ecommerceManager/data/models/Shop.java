@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.ecommerceManager.data.User;
@@ -35,6 +36,20 @@ public class Shop {
 	@JoinColumn(name="userId")
 	@JsonIgnore
 	private User user;
+	
+	@OneToOne(mappedBy="shop")
+	@JsonIgnore
+	private Fakturownia fakturownia;
+	
+	
+
+	public Fakturownia getFakturownia() {
+		return fakturownia;
+	}
+
+	public void setFakturownia(Fakturownia fakturownia) {
+		this.fakturownia = fakturownia;
+	}
 
 	public long getShopId() {
 		return shopId;

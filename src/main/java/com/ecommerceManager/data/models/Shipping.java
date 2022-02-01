@@ -22,7 +22,6 @@ public class Shipping {
 	private String city;
 	private String state;
 	private String postcode;
-	private String email;
 	private String phone;
 	
 	@OneToOne(mappedBy="shipping")
@@ -77,12 +76,6 @@ public class Shipping {
 	public void setPostcode(String postcode) {
 		this.postcode = postcode;
 	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
 	public String getPhone() {
 		return phone;
 	}
@@ -93,7 +86,7 @@ public class Shipping {
 	public String toString() {
 		return "Shipping [shipping_id=" + shipping_id + ", first_name=" + first_name + ", last_name=" + last_name
 				+ ", company=" + company + ", address_1=" + address_1 + ", address_2=" + address_2 + ", city=" + city
-				+ ", state=" + state + ", postcode=" + postcode + ", email=" + email + ", phone=" + phone + "]";
+				+ ", state=" + state + ", postcode=" + postcode + ", phone=" + phone + "]";
 	}
 	
 	
