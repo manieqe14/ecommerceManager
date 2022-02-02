@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import com.ecommerceManager.data.models.BillingRepo;
+import com.ecommerceManager.data.models.Invoice;
 import com.ecommerceManager.data.models.LineItem;
 import com.ecommerceManager.data.models.LineItemRepo;
 import com.ecommerceManager.data.models.MetaData;
@@ -34,7 +35,7 @@ public class DataGetter {
 	private ShippingRepo shippingRepo;
 	private BillingRepo billingRepo;
 	
-	private final String httpSuffix = "/wp-json/wc/v3/orders";
+	private final String httpSuffix = "/wp-json/wc/v3/orders?per_page=50";
 	private Shop shop;
 	
 	private HttpRequest request;
@@ -59,7 +60,6 @@ public class DataGetter {
 			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			List<Order> orders = objectMapper.readValue(response.body(), new TypeReference<List<Order>>() {});
 			for(Order order : orders) {
-				
 				  billingRepo.save(order.getBilling()); 
 				  shippingRepo.save(order.getShipping());
 				  for(MetaData metaData : order.getMeta_data()) { 
@@ -69,6 +69,8 @@ public class DataGetter {
 				  { 
 					  lineItemRepo.save(lineItem); 
 				  }
+				  
+				order.setInvoice(new Invoice());
 				order.setShop(shop); 
 				orderRepo.save(order);
 				

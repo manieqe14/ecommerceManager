@@ -12,7 +12,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
@@ -28,9 +27,11 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
 	private @Autowired HttpServletRequest request;
 
 	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+	public Authentication authenticate(Authentication authentication) {
 		final String username = (String) authentication.getPrincipal();
-		if(username == "") throw new BadCredentialsException("Login empty");
+		if(username.equals("")) {
+			throw new BadCredentialsException("Login empty");
+		}
 		Optional<User> user = Optional.of(userRepo.findByUsername(authentication.getName()));
 		String shopIdString = request.getRequestURI().replaceAll("/shop/", "").replaceAll("\\/.*$", "");
 		

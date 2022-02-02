@@ -8,7 +8,7 @@ public class Invoice {
 	
 	private long invoiceId;
 	private String invoiceNumber;
-	
+		
 
 	public long getInvoiceId() {
 		return invoiceId;
@@ -24,6 +24,11 @@ public class Invoice {
 
 	public void setInvoiceNumber(String invoiceNumber) {
 		this.invoiceNumber = invoiceNumber;
+	}
+
+	@Override
+	public String toString() {
+		return "Invoice [invoiceId=" + invoiceId + ", invoiceNumber=" + invoiceNumber + "]";
 	}
 	
 	

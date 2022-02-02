@@ -90,7 +90,16 @@ public class OrdersController {
 	
 	@GetMapping("/shop/{shopId}/order/{orderId}/invoice")
 	public String getInvoice(@PathVariable Map<String, String> pathVariables) {
-		return FakturowniaHelper.getInvoice(140920747, fakturowniaRepo.findApiToken(pathVariables.get("shopId")));
+		Order order = orderRepo.findById(Long.parseLong(pathVariables.get("orderId"))).orElse(new Order());
+		//return FakturowniaHelper.getInvoice(Long.parseLong(pathVariables.get("orderId")), fakturowniaRepo.findApiToken(pathVariables.get("shopId")));
+		return FakturowniaHelper.generateInvoice(order);
 	}
+	
+	@GetMapping("/shop/{shopId}/products/best")
+	public List<Object> bestProducts(@PathVariable long shopId) {
+		List<Object> objects = lineItemRepo.bestSellProducts(shopId);
+		return objects;
+	}
+	
 
 }

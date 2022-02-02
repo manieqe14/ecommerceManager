@@ -48,8 +48,7 @@ public class Order {
 	private String payment_method;
 	private String payment_method_title;
 	private String customer_note;
-	
-	
+		
 	@ManyToOne
 	@JsonIgnore
 	private Shop shop;
@@ -74,12 +73,13 @@ public class Order {
 	
 
 	public Invoice getInvoice() {
-		return invoice;
+		return invoice == null ? new Invoice() : invoice;
 	}
 
 
 	public void setInvoice(Invoice invoice) {
-		this.invoice = invoice;
+		
+		this.invoice = (invoice == null) ? new Invoice() : invoice ;
 	}
 
 
