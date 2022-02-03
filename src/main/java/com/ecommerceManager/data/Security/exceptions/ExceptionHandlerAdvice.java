@@ -18,7 +18,7 @@ public class ExceptionHandlerAdvice {
 	
 	@ExceptionHandler(ResponseStatusException.class)
 	public ResponseEntity handleResponseException(ResponseStatusException e) {
-		return ResponseEntity.status(HttpStatus.CONFLICT).body("No such user");
+		return ResponseEntity.status(e.getStatus()).body(e.getMessage());
 		
 	}
 

@@ -28,8 +28,10 @@ public class Shop {
 	private String siteUrl;
 	private String username;
 	private String password;
+	private String name;
 	
 	@OneToMany(mappedBy="shop")
+	@JsonIgnore
 	private List<Order> orders;
 	
 	@ManyToOne
@@ -42,6 +44,14 @@ public class Shop {
 	private Fakturownia fakturownia;
 	
 	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public Fakturownia getFakturownia() {
 		return fakturownia;

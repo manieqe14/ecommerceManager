@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ecommerceManager.data.models.Fakturownia;
 import com.ecommerceManager.data.models.LineItem;
 import com.ecommerceManager.data.models.Order;
 import com.ecommerceManager.data.models.Shop;
@@ -13,6 +14,7 @@ public class FakturowniaRequest {
 	
 	private Order order;
 	private Shop shop;
+	private Fakturownia fakturownia;
 	
 	private int department_id;
     private String seller_name;
@@ -39,19 +41,21 @@ public class FakturowniaRequest {
 	public FakturowniaRequest(Order order) {
 		this.order = order;
 		this.shop = order.getShop();
+		this.fakturownia = order.getShop().getFakturownia();
 		generateInvoice();
 	}
 	
 	public void generateInvoice() {
 		department_id = 761451;
-	    seller_name = "Good Sound Mariusz Pacyga";
-		seller_bank = "mBank";
-		seller_bank_account = "24 1140 1977 0000 5921 7200 1001";
-		seller_post_code = "34-221";
-		seller_city = "Skawica";
-		seller_street = "Skawica 592";
+	    seller_name = fakturownia.getSeller_name();
+		seller_bank = fakturownia.getSeller_bank();
+		seller_bank_account = fakturownia.getSeller_bank_account();
+		seller_post_code = fakturownia.getSeller_post_code();
+		seller_city = fakturownia.getSeller_city();
+		seller_street = fakturownia.getSeller_street();
 		kind = "vat";
 		number = null;
+		status = "paid";
 		sell_date = formatData(order.getDate_created());
 		issue_date = formatData(LocalDateTime.now().toString());
 		payment_to = null;
@@ -114,7 +118,6 @@ public class FakturowniaRequest {
 		
 		
 	}
-	
 	
 	
 	public String getKind() {

@@ -43,7 +43,7 @@ public class UserController {
 	
 	@GetMapping("/users/{userId}")
 	public User getUser(@PathVariable int userId) {
-		throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No user");
 	}
 
 }
