@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.ecommerceManager.data.models.Shop;
+
 public class UserPrincipal implements UserDetails {
 	
 	private User user;
@@ -55,6 +57,10 @@ public class UserPrincipal implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+	
+	public List<Shop> getShops() {
+		return user.getShops();
 	}
 
 }
