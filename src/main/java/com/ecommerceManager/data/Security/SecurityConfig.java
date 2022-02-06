@@ -9,9 +9,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.ecommerceManager.data.Security.exceptions.RestAuthenticationEntryPoint;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
@@ -24,6 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
 	private MyAuthenticationProvider myAuthenticationProvider;
+	
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -40,6 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			.antMatchers("/login").permitAll()
 	      .anyRequest().authenticated().and().httpBasic();
 		http.csrf().disable();
+		
+		http.exceptionHandling().authenticationEntryPoint(new RestAuthenticationEntryPoint());
 		
 		//set stateless
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();

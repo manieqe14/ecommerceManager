@@ -1,24 +1,21 @@
 package com.ecommerceManager.data.Security.exceptions;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.server.ResponseStatusException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
 	
-	@ExceptionHandler(BadCredentialsException.class)
-	public ResponseEntity handleException(BadCredentialsException e) {
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not allowed");
-		
-	}
-	
-	@ExceptionHandler(ResponseStatusException.class)
-	public ResponseEntity handleResponseException(ResponseStatusException e) {
-		return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+	@ExceptionHandler(MyException.class)
+	public ResponseEntity<Object> handleResponseException(MyException e) throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+		return ResponseEntity.status(e.getStatusCode())
+				.header("Content-Type", "application/json")
+				.body(mapper.writeValueAsString(new MyExceptionDTO(e)));
 		
 	}
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerceManager.controllers.helpers.FakturowniaHelper;
+import com.ecommerceManager.data.Security.exceptions.MyException;
 import com.ecommerceManager.data.models.BillingRepo;
 import com.ecommerceManager.data.models.FakturowniaRepo;
 import com.ecommerceManager.data.models.LineItemRepo;
@@ -50,11 +52,7 @@ public class OrdersController {
 	public String refreshOrders(@PathVariable long id) {
 		Shop shop = shopRepo.findById(id).orElse(new Shop());
 		DataGetter getter = new DataGetter(shop, orderRepo, metaDataRepo, lineItemRepo, billingRepo, shippingRepo);
-		List<Order> orders = getter.refreshOrders();
-		StringBuffer result = new StringBuffer();
-		for(Order order : orders) {
-			result.append(order.toString());
-		}
+		getter.refreshOrders();
 		return "Order refreshed!";
 	}
 	
@@ -90,7 +88,7 @@ public class OrdersController {
 	
 	@GetMapping("/shop/{shopId}/order/{orderId}/invoice")
 	public String getInvoice(@PathVariable Map<String, String> pathVariables) {
-		Order order = orderRepo.findById(Long.parseLong(pathVariables.get("orderId"))).orElse(new Order());
+		Order order = orderRepo.findById(Long.parseLong(pathVariables.get("orderId"))).orElseThrow(() -> new MyException(HttpStatus.NOT_FOUND, "Order not found"));
 		//return FakturowniaHelper.getInvoice(Long.parseLong(pathVariables.get("orderId")), fakturowniaRepo.findApiToken(pathVariables.get("shopId")));
 		return FakturowniaHelper.generateInvoice(order);
 	}

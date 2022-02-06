@@ -50,7 +50,7 @@ public class DataGetter {
 		this.billingRepo = billingRepo;
 	}
 	
-	public List<Order> refreshOrders() {
+	public String refreshOrders() {
 		String encoding = Base64Coder.encodeString(shop.getUsername() + ":" + shop.getPassword());
 		try {
 			request = HttpRequest.newBuilder().uri(new URI(shop.getSiteUrl() + httpSuffix)).header(HttpHeaders.AUTHORIZATION, "Basic " + encoding).build();
@@ -59,28 +59,34 @@ public class DataGetter {
 			ObjectMapper objectMapper = new ObjectMapper();
 			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			List<Order> orders = objectMapper.readValue(response.body(), new TypeReference<List<Order>>() {});
+			if(orderRepo.findByWpId(shop.getShopId(), orders.get(0).getWp_id()).isEmpty()) {
+				System.out.println("orders all right");
+				return "OK!";
+			}
 			for(Order order : orders) {
-				  billingRepo.save(order.getBilling()); 
-				  shippingRepo.save(order.getShipping());
-				  for(MetaData metaData : order.getMeta_data()) { 
-					  metaDataRepo.save(metaData); 
+				if(orderRepo.findByWpId(shop.getShopId(), order.getWp_id()).isEmpty()){
+					  billingRepo.save(order.getBilling()); 
+					  shippingRepo.save(order.getShipping());
+					  for(MetaData metaData : order.getMeta_data()) { 
+						  metaDataRepo.save(metaData); 
+					  } 
+					  for(LineItem lineItem : order.getLine_items())
+					  { 
+						  lineItemRepo.save(lineItem); 
+					  }
+					  
+					order.setInvoice(new Invoice());
+					order.setShop(shop); 
+					orderRepo.save(order);
+					
+					for(MetaData metaData : order.getMeta_data()) { 
+						metaData.setOrder(order);
+						metaDataRepo.save(metaData); 
 				  } 
-				  for(LineItem lineItem : order.getLine_items())
-				  { 
-					  lineItemRepo.save(lineItem); 
-				  }
-				  
-				order.setInvoice(new Invoice());
-				order.setShop(shop); 
-				orderRepo.save(order);
-				
-				for(MetaData metaData : order.getMeta_data()) { 
-					metaData.setOrder(order);
-					metaDataRepo.save(metaData); 
-				  } 
+				}
 				
 			}
-			return orders;
+			return "OK!";
 			
 		} catch (URISyntaxException | IOException | InterruptedException e) {
 			e.printStackTrace();

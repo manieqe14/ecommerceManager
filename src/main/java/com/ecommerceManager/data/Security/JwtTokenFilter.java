@@ -1,8 +1,6 @@
 package com.ecommerceManager.data.Security;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -16,9 +14,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.ecommerceManager.data.UserPrincipal;
+import com.ecommerceManager.data.Security.exceptions.CheckUserPermission;
+import com.ecommerceManager.data.Security.exceptions.MyAuthenticationException;
+import com.ecommerceManager.data.Security.exceptions.RestAuthenticationEntryPoint;
 
 
 @Component
@@ -26,6 +26,9 @@ public class JwtTokenFilter extends OncePerRequestFilter{
 	
 	@Autowired
 	private MyUserDetailsService myUserDetailsService;
+	
+	@Autowired
+	private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
 	
 	@Override
@@ -42,11 +45,15 @@ public class JwtTokenFilter extends OncePerRequestFilter{
 		}
 		final String token = header.replace("Bearer ", "").trim();
 		if(!JwtTokenUtil.validateToken(token)) {
-			filterChain.doFilter(request, response);
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "token expired");
+			restAuthenticationEntryPoint.commence(request, response, new MyAuthenticationException("JWT Expired", HttpStatus.UNAUTHORIZED));
+			return;
 		}
 		
 		UserPrincipal user = (UserPrincipal) myUserDetailsService.loadUserByUsername(JwtTokenUtil.getUsernameFromToken(token));
+		if(!CheckUserPermission.checkPermissionToShop(user, request.getRequestURI())) {
+			restAuthenticationEntryPoint.commence(request,  response, new MyAuthenticationException("Shop forbidden", HttpStatus.UNAUTHORIZED));
+			return;
+		} 
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		filterChain.doFilter(request, response);

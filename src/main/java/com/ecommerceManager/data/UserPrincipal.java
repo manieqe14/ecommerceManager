@@ -62,5 +62,5 @@ public class UserPrincipal implements UserDetails {
 	public List<Shop> getShops() {
 		return user.getShops();
 	}
-
+	
 }

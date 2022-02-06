@@ -25,9 +25,7 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long orderId;
 	
-	
-	@Column(name="wpId")
-	private long id;
+	private long wp_id;
 	
 	private int parent_id;
 	private String status;
@@ -83,13 +81,14 @@ public class Order {
 	}
 
 
-	public long getId() {
-		return id;
+
+	public long getWp_id() {
+		return wp_id;
 	}
 
 
-	public void setId(long id) {
-		this.id = id;
+	public void setWp_id(long wp_id) {
+		this.wp_id = wp_id;
 	}
 
 
@@ -246,7 +245,7 @@ public class Order {
 
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", parent_id=" + parent_id + ", status=" + status + ", date_created=" + date_created
+		return "Order [wp_id=" + wp_id + ", parent_id=" + parent_id + ", status=" + status + ", date_created=" + date_created
 				+ ", date_modified=" + date_modified + ", discount_total=" + discount_total + ", total=" + total
 				+ ", currency=" + currency + ", billing=" + billing + ", shipping=" + shipping + ", payment_method="
 				+ payment_method + ", payment_method_title=" + payment_method_title + ", customer_note=" + customer_note
