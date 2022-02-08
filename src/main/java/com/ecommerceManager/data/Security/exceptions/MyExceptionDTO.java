@@ -6,10 +6,12 @@ public class MyExceptionDTO {
 	
 	private HttpStatus statusCode;
 	private String message;
+	private String timestamp;
 	
 	public MyExceptionDTO(MyException exception) {
 		this.statusCode = exception.getStatusCode();
 		this.message = exception.getMessage();
+		this.timestamp = exception.getTimestamp();
 	}
 
 	public HttpStatus getStatusCode() {
@@ -26,7 +28,17 @@ public class MyExceptionDTO {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public String getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
 	}	
+	
+	
 	
 
 }

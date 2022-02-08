@@ -1,25 +1,11 @@
-package com.ecommerceManager.data.models;
+package com.ecommerceManager.data.models.DTOs;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import com.ecommerceManager.data.models.Fakturownia;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
-@Entity
-public class Fakturownia {
+public class FakturowniaDTO {
 	
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int fakturowniaId;
-	
 	private String token;
-	
 	private int department_id;
     private String seller_name;
 	private String seller_bank;
@@ -28,9 +14,22 @@ public class Fakturownia {
 	private String seller_city;
 	private String seller_street;
 	
-	@OneToOne
-	@JoinColumn(name="shopId")
-	private Shop shop;
+	private Long shopId;
+	private String shopName;
+	
+	public FakturowniaDTO(Fakturownia fakturownia) {
+		fakturowniaId = fakturownia.getFakturowniaId();
+		token = fakturownia.getToken();
+		department_id = fakturownia.getDepartment_id();
+		seller_name = fakturownia.getSeller_name();
+		seller_bank = fakturownia.getSeller_bank();
+		seller_bank_account = fakturownia.getSeller_bank_account();
+		seller_post_code = fakturownia.getSeller_post_code();
+		seller_city = fakturownia.getSeller_city();
+		seller_street = fakturownia.getSeller_street();
+		shopId = fakturownia.getShop().getShopId();
+		shopName = fakturownia.getShop().getName();
+	}
 
 	public int getFakturowniaId() {
 		return fakturowniaId;
@@ -46,14 +45,6 @@ public class Fakturownia {
 
 	public void setToken(String token) {
 		this.token = token;
-	}
-
-	public Shop getShop() {
-		return shop;
-	}
-
-	public void setShop(Shop shop) {
-		this.shop = shop;
 	}
 
 	public int getDepartment_id() {
@@ -111,8 +102,22 @@ public class Fakturownia {
 	public void setSeller_street(String seller_street) {
 		this.seller_street = seller_street;
 	}
-	
-	
+
+	public Long getShopId() {
+		return shopId;
+	}
+
+	public void setShopId(Long shopId) {
+		this.shopId = shopId;
+	}
+
+	public String getShopName() {
+		return shopName;
+	}
+
+	public void setShopName(String shopName) {
+		this.shopName = shopName;
+	}
 	
 	
 

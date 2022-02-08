@@ -26,7 +26,9 @@ public class Shop {
 	
 	@Column(nullable = false, unique = true)
 	private String siteUrl;
+	@Column(nullable = false)
 	private String username;
+	@Column(nullable = false)
 	private String password;
 	private String name;
 	
@@ -36,11 +38,9 @@ public class Shop {
 	
 	@ManyToOne
 	@JoinColumn(name="userId")
-	@JsonIgnore
 	private User user;
 	
 	@OneToOne(mappedBy="shop")
-	@JsonIgnore
 	private Fakturownia fakturownia;
 	
 	

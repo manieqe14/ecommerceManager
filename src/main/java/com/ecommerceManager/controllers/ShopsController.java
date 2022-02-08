@@ -18,10 +18,13 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ecommerceManager.data.User;
 import com.ecommerceManager.data.UserRepo;
 import com.ecommerceManager.data.ValidationFunctions;
+import com.ecommerceManager.data.Security.exceptions.MyException;
 import com.ecommerceManager.data.models.Fakturownia;
 import com.ecommerceManager.data.models.FakturowniaRepo;
 import com.ecommerceManager.data.models.Shop;
 import com.ecommerceManager.data.models.ShopRepo;
+import com.ecommerceManager.data.models.DTOs.FakturowniaDTO;
+import com.ecommerceManager.data.models.DTOs.ShopDTO;
 
 @RestController
 public class ShopsController {
@@ -38,55 +41,53 @@ public class ShopsController {
 	private @Autowired HttpServletRequest request;
 	
 	@PostMapping("/shop/addShop")
-	public String addShop( @RequestBody Shop shop) {
+	public ShopDTO addShop( @RequestBody Shop shop) {
 		User user = userRepo.findByUsername(request.getUserPrincipal().getName());
 		shop.setUser(user);
 		shopRepo.save(shop);		
-		return "Shop added!";
+		return new ShopDTO(shop);
 	}
 	
 	@GetMapping("/shop/{id}/info")
-	public Shop getInfo(@PathVariable long id) {
-		return shopRepo.findById(id).orElse(new Shop());
+	public ShopDTO getInfo(@PathVariable long id) {
+		return new ShopDTO(shopRepo.findById(id).orElse(new Shop()));
 	}
 	
 	@PutMapping("/shop/{shopId}")
-	public Shop updateShop(@PathVariable long shopId, @RequestParam Optional<String> name) {
-		System.out.println(name.get().toString());
+	public ShopDTO updateShop(@PathVariable long shopId, @RequestParam Optional<String> name) {
 		if(name.isPresent()) {
 			Shop shop = shopRepo.findById(shopId).orElse(new Shop());
 			shop.setName(name.get());
 			shopRepo.save(shop);
 			
 		}
-		return shopRepo.findById(shopId).orElse(new Shop());
+		return new ShopDTO(shopRepo.findById(shopId).orElse(new Shop()));
 	}
 	
 	@PostMapping("/shop/{shopId}/fakturowniaSettings")
-	public Fakturownia fakturowniaSettings(@PathVariable long shopId, @RequestBody Fakturownia fakturownia) {
+	public FakturowniaDTO fakturowniaSettings(@PathVariable long shopId, @RequestBody Fakturownia fakturownia) {
+		ValidationFunctions.fakturowniaValidation(fakturownia);
 		fakturownia.setShop(shopRepo.findById(shopId).orElse(new Shop()));
 		fakturowniaRepo.save(fakturownia);
-		return fakturownia;
+		return new FakturowniaDTO(fakturownia);
 		
 	}
 	
 	@PutMapping("/shop/{shopId}/fakturowniaSettings")
-	public Fakturownia fakturowniaUpdateSettings(@PathVariable long shopId, @RequestBody Fakturownia fakturownia) {
-		if(ValidationFunctions.postCodeValidation(fakturownia.getSeller_post_code()))
-		{
-			fakturowniaRepo.save(fakturownia);
-		}
-		else {
-			throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Validation error");
-		}
-		
-		return fakturownia;
+	public FakturowniaDTO fakturowniaUpdateSettings(@PathVariable long shopId, @RequestBody Fakturownia fakturownia) {
+		ValidationFunctions.fakturowniaValidation(fakturownia);
+		Shop shop = shopRepo.findById(shopId).orElse(null);
+		fakturownia.setShop(shop);
+		fakturowniaRepo.save(fakturownia);
+		return new FakturowniaDTO(fakturownia);
 		
 	}
 	
 	@GetMapping("/shop/{shopId}/fakturowniaSettings")
-	public Fakturownia getFakturowniaSettings(@PathVariable long shopId) {
-		return fakturowniaRepo.findByShop(shopRepo.findById(shopId).orElse(new Shop()));
+	public FakturowniaDTO getFakturowniaSettings(@PathVariable long shopId) {
+		return new FakturowniaDTO(fakturowniaRepo.findByShop(shopRepo.findById(shopId).orElse(new Shop())));
 	}
+	
+	//dopisać delete shop
 
 }

@@ -18,10 +18,18 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException authException) throws IOException, ServletException {
+		
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		ObjectMapper mapper = new ObjectMapper();
-		response.getOutputStream().print(mapper.writeValueAsString(new MyAuthenticationExceptionDTO((MyAuthenticationException) authException)));
+		if(authException instanceof MyAuthenticationException) {
+			response.getOutputStream()
+			.print(mapper.writeValueAsString(new MyAuthenticationExceptionDTO((MyAuthenticationException) authException)));
+		}
+		else
+		{
+			response.getOutputStream().print(authException.getMessage());
+		}
 
 	}
 
